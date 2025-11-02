@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VaporJump - A Neon Journey</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="menu" class="screen active">
+        <div class="vaporwave-bg"></div>
+        <div class="menu-content">
+            <h1 class="neon-title">VAPORJUMP</h1>
+            <div class="subtitle">[ A E S T H E T I C  J U M P ]</div>
+            <div class="menu-buttons">
+                <button id="startBtn" class="neon-button">START GAME</button>
+                <button id="instructionsBtn" class="neon-button">INSTRUCTIONS</button>
+            </div>
+            <div id="instructions" class="instructions hidden">
+                <p>← → Arrow keys or tilt to move</p>
+                <p>Jump on platforms to climb higher</p>
+                <p>Don't fall off the screen!</p>
+                <button id="backBtn" class="neon-button small">BACK</button>
+            </div>
+            <div class="high-score">HIGH SCORE: <span id="menuHighScore">0</span></div>
+        </div>
+    </div>
+
+    <div id="game" class="screen">
+        <canvas id="gameCanvas"></canvas>
+        <div class="hud">
+            <div class="score">SCORE: <span id="score">0</span></div>
+            <div class="high-score-game">BEST: <span id="highScore">0</span></div>
+        </div>
+        <div id="gameOver" class="game-over hidden">
+            <h2 class="neon-text">GAME OVER</h2>
+            <p class="final-score">SCORE: <span id="finalScore">0</span></p>
+            <button id="restartBtn" class="neon-button">PLAY AGAIN</button>
+            <button id="menuBtn" class="neon-button">MAIN MENU</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

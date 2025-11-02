@@ -1,0 +1,252 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Orbitron', monospace;
+    overflow: hidden;
+    background: #000;
+}
+
+.screen {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+}
+
+.screen.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Menu Screen */
+#menu {
+    position: relative;
+    background: linear-gradient(180deg, #0a0015 0%, #1a0033 50%, #2d0052 100%);
+    overflow: hidden;
+}
+
+.vaporwave-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: 
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(255, 0, 255, 0.03) 2px,
+            rgba(255, 0, 255, 0.03) 4px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 255, 255, 0.03) 2px,
+            rgba(0, 255, 255, 0.03) 4px
+        );
+    animation: scan 8s linear infinite;
+}
+
+@keyframes scan {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(20px); }
+}
+
+.menu-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 40px;
+}
+
+.neon-title {
+    font-size: 5rem;
+    font-weight: 900;
+    letter-spacing: 0.3em;
+    margin-bottom: 20px;
+    color: #fff;
+    text-shadow: 
+        0 0 10px #fff,
+        0 0 20px #fff,
+        0 0 30px #ff00ff,
+        0 0 40px #ff00ff,
+        0 0 70px #ff00ff,
+        0 0 80px #ff00ff,
+        0 0 100px #ff00ff,
+        0 0 150px #ff00ff;
+    animation: flicker 3s infinite alternate;
+}
+
+@keyframes flicker {
+    0%, 18%, 22%, 25%, 53%, 57%, 100% {
+        text-shadow: 
+            0 0 10px #fff,
+            0 0 20px #fff,
+            0 0 30px #ff00ff,
+            0 0 40px #ff00ff,
+            0 0 70px #ff00ff,
+            0 0 80px #ff00ff,
+            0 0 100px #ff00ff,
+            0 0 150px #ff00ff;
+    }
+    20%, 24%, 55% {
+        text-shadow: none;
+    }
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: #00ffff;
+    letter-spacing: 0.5em;
+    margin-bottom: 60px;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+.neon-button {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.3rem;
+    font-weight: 700;
+    padding: 15px 50px;
+    background: transparent;
+    color: #ff00ff;
+    border: 3px solid #ff00ff;
+    cursor: pointer;
+    letter-spacing: 0.2em;
+    transition: all 0.3s;
+    box-shadow: 
+        0 0 5px #ff00ff,
+        inset 0 0 5px rgba(255, 0, 255, 0.2);
+}
+
+.neon-button:hover {
+    background: rgba(255, 0, 255, 0.2);
+    box-shadow: 
+        0 0 20px #ff00ff,
+        0 0 40px #ff00ff,
+        inset 0 0 20px rgba(255, 0, 255, 0.4);
+    transform: scale(1.05);
+}
+
+.neon-button.small {
+    font-size: 1rem;
+    padding: 10px 30px;
+    margin-top: 20px;
+}
+
+.instructions {
+    margin-top: 40px;
+    color: #00ffff;
+    font-size: 1.1rem;
+    line-height: 2;
+}
+
+.instructions p {
+    text-shadow: 0 0 5px #00ffff;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.high-score {
+    margin-top: 60px;
+    font-size: 1.2rem;
+    color: #ffff00;
+    text-shadow: 0 0 10px #ffff00;
+    letter-spacing: 0.2em;
+}
+
+/* Game Screen */
+#game {
+    position: relative;
+    background: linear-gradient(180deg, #0a0015 0%, #1a0033 50%, #2d0052 100%);
+}
+
+#gameCanvas {
+    display: block;
+    max-width: 600px;
+    max-height: 100vh;
+    margin: 0 auto;
+    background: radial-gradient(ellipse at center, rgba(75, 0, 130, 0.3) 0%, transparent 70%);
+}
+
+.hud {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 40px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #00ffff;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+    z-index: 100;
+    letter-spacing: 0.1em;
+}
+
+.game-over {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    background: rgba(0, 0, 0, 0.9);
+    padding: 60px 80px;
+    border: 3px solid #ff00ff;
+    box-shadow: 0 0 30px #ff00ff, inset 0 0 30px rgba(255, 0, 255, 0.2);
+    z-index: 200;
+}
+
+.neon-text {
+    font-size: 3rem;
+    color: #ff00ff;
+    text-shadow: 0 0 20px #ff00ff, 0 0 40px #ff00ff;
+    margin-bottom: 30px;
+    letter-spacing: 0.2em;
+}
+
+.final-score {
+    font-size: 1.8rem;
+    color: #ffff00;
+    text-shadow: 0 0 10px #ffff00;
+    margin-bottom: 40px;
+    letter-spacing: 0.15em;
+}
+
+.game-over .neon-button {
+    margin: 10px;
+}
+
+@media (max-width: 768px) {
+    .neon-title {
+        font-size: 3rem;
+    }
+    
+    .subtitle {
+        font-size: 0.8rem;
+    }
+    
+    .neon-button {
+        font-size: 1rem;
+        padding: 12px 30px;
+    }
+    
+    .hud {
+        font-size: 1rem;
+        gap: 20px;
+    }
+}
