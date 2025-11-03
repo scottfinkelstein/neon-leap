@@ -528,125 +528,125 @@ function drawMallBackground(scrollOffset) {
     ctx.restore();
 }
 
-// Draw mall floor/level structure
-function drawMallFloor(y, level) {
+// Draw mall floor/level structure (now vertical dividers)
+function drawMallFloor(x, level) {
     ctx.save();
     
-    // Main floor structure
+    // Main floor structure (vertical divider)
     ctx.fillStyle = 'rgba(40, 25, 60, 0.9)';
-    ctx.fillRect(0, y - 15, config.width, 30);
+    ctx.fillRect(x - 15, 0, 30, config.height);
     
     // Floor edge/rim with neon accent
     ctx.strokeStyle = '#00ffff';
     ctx.lineWidth = 2;
     ctx.shadowBlur = 8;
     ctx.shadowColor = '#00ffff';
-    ctx.strokeRect(0, y - 15, config.width, 30);
+    ctx.strokeRect(x - 15, 0, 30, config.height);
     ctx.shadowBlur = 0;
     
-    // Floor support beams
-    for (let x = 100; x < config.width; x += 150) {
+    // Floor support beams (horizontal)
+    for (let y = 100; y < config.height; y += 150) {
         ctx.fillStyle = 'rgba(60, 40, 80, 0.8)';
-        ctx.fillRect(x - 5, y - 15, 10, 30);
+        ctx.fillRect(x - 15, y - 5, 30, 10);
         
         // Beam highlights
         ctx.strokeStyle = '#ff1493';
         ctx.lineWidth = 1;
         ctx.shadowBlur = 5;
         ctx.shadowColor = '#ff1493';
-        ctx.strokeRect(x - 5, y - 15, 10, 30);
+        ctx.strokeRect(x - 15, y - 5, 30, 10);
         ctx.shadowBlur = 0;
     }
     
     // Floor pattern/tiles
     ctx.strokeStyle = 'rgba(100, 50, 150, 0.3)';
     ctx.lineWidth = 1;
-    for (let x = 0; x < config.width; x += 25) {
+    for (let y = 0; y < config.height; y += 25) {
         ctx.beginPath();
-        ctx.moveTo(x, y - 15);
-        ctx.lineTo(x, y + 15);
+        ctx.moveTo(x - 15, y);
+        ctx.lineTo(x + 15, y);
         ctx.stroke();
     }
     
     ctx.restore();
 }
 
-// Draw realistic storefront
-function drawRealisticStore(store, y) {
+// Draw realistic storefront (horizontal orientation)
+function drawRealisticStore(store, x) {
     ctx.save();
     
     // Store building depth/shadow
     ctx.fillStyle = 'rgba(5, 0, 15, 0.9)';
-    ctx.fillRect(30, y - 10, config.width - 60, 200);
+    ctx.fillRect(x - 10, 30, 200, config.height - 60);
     
     // Main storefront structure
     ctx.fillStyle = 'rgba(25, 15, 40, 0.9)';
-    ctx.fillRect(40, y, config.width - 80, 180);
+    ctx.fillRect(x, 40, 180, config.height - 80);
     
     // Store entrance area (recessed)
     ctx.fillStyle = 'rgba(35, 20, 50, 0.95)';
-    ctx.fillRect(config.width/2 - 60, y + 120, 120, 60);
+    ctx.fillRect(x + 120, config.height/2 - 60, 60, 120);
     
     // Double doors with glass effect
     ctx.fillStyle = 'rgba(10, 5, 20, 0.8)';
-    ctx.fillRect(config.width/2 - 55, y + 125, 50, 50);
-    ctx.fillRect(config.width/2 + 5, y + 125, 50, 50);
+    ctx.fillRect(x + 125, config.height/2 - 55, 50, 50);
+    ctx.fillRect(x + 125, config.height/2 + 5, 50, 50);
     
     // Door frames with neon glow
     ctx.strokeStyle = store.color;
     ctx.lineWidth = 3;
     ctx.shadowBlur = 12;
     ctx.shadowColor = store.color;
-    ctx.strokeRect(config.width/2 - 55, y + 125, 50, 50);
-    ctx.strokeRect(config.width/2 + 5, y + 125, 50, 50);
+    ctx.strokeRect(x + 125, config.height/2 - 55, 50, 50);
+    ctx.strokeRect(x + 125, config.height/2 + 5, 50, 50);
     
     // Door handles
     ctx.fillStyle = store.color;
     ctx.shadowBlur = 8;
     ctx.beginPath();
-    ctx.arc(config.width/2 - 10, y + 150, 3, 0, Math.PI * 2);
-    ctx.arc(config.width/2 + 10, y + 150, 3, 0, Math.PI * 2);
+    ctx.arc(x + 150, config.height/2 - 10, 3, 0, Math.PI * 2);
+    ctx.arc(x + 150, config.height/2 + 10, 3, 0, Math.PI * 2);
     ctx.fill();
     ctx.shadowBlur = 0;
     
     // Large display windows
     const windowPositions = [
-        { x: 60, width: 100 },
-        { x: 180, width: 120 },
-        { x: config.width - 280, width: 120 },
-        { x: config.width - 140, width: 100 }
+        { y: 60, height: 100 },
+        { y: 180, height: 120 },
+        { y: config.height - 280, height: 120 },
+        { y: config.height - 140, height: 100 }
     ];
     
     windowPositions.forEach((window, i) => {
         // Window glass
         ctx.fillStyle = 'rgba(20, 10, 40, 0.6)';
-        ctx.fillRect(window.x, y + 30, window.width, 80);
+        ctx.fillRect(x + 30, window.y, 80, window.height);
         
         // Window frame
         ctx.strokeStyle = store.color;
         ctx.lineWidth = 2;
         ctx.shadowBlur = 8;
         ctx.shadowColor = store.color;
-        ctx.strokeRect(window.x, y + 30, window.width, 80);
+        ctx.strokeRect(x + 30, window.y, 80, window.height);
         
         // Window display items
         if (Math.random() > 0.4) {
             ctx.fillStyle = store.color;
             ctx.globalAlpha = 0.6;
             // Simulate products/displays
-            ctx.fillRect(window.x + 10, y + 70, 20, 25);
-            ctx.fillRect(window.x + 40, y + 50, 25, 35);
-            ctx.fillRect(window.x + window.width - 35, y + 60, 20, 30);
+            ctx.fillRect(x + 70, window.y + 10, 25, 20);
+            ctx.fillRect(x + 50, window.y + 40, 35, 25);
+            ctx.fillRect(x + 60, window.y + window.height - 35, 30, 20);
             ctx.globalAlpha = 1;
         }
         
         ctx.shadowBlur = 0;
     });
     
-    // Overhead canopy/awning
+    // Side canopy/awning
     ctx.fillStyle = store.color;
     ctx.globalAlpha = 0.4;
-    ctx.fillRect(40, y - 25, config.width - 80, 25);
+    ctx.fillRect(x - 25, 40, 25, config.height - 80);
     ctx.globalAlpha = 1;
     
     // Canopy support pillars
@@ -655,37 +655,39 @@ function drawRealisticStore(store, y) {
     ctx.shadowBlur = 12;
     ctx.shadowColor = store.color;
     ctx.beginPath();
-    ctx.moveTo(60, y - 25);
-    ctx.lineTo(60, y);
-    ctx.moveTo(config.width - 60, y - 25);
-    ctx.lineTo(config.width - 60, y);
+    ctx.moveTo(x - 25, 60);
+    ctx.lineTo(x, 60);
+    ctx.moveTo(x - 25, config.height - 60);
+    ctx.lineTo(x, config.height - 60);
     ctx.stroke();
     ctx.shadowBlur = 0;
     
-    // Large neon store sign
+    // Large neon store sign (rotated for vertical reading)
+    ctx.save();
+    ctx.translate(x + 70, config.height / 2);
+    ctx.rotate(-Math.PI / 2);
+    
     ctx.font = 'bold 32px Orbitron, monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     
     // Multi-layer neon effect for intense glow
-    const signY = y + 70;
-    
     // Outer glow layers
     ctx.shadowBlur = 40;
     ctx.shadowColor = store.color;
     ctx.fillStyle = store.color;
-    ctx.fillText(store.name, config.width / 2, signY);
+    ctx.fillText(store.name, 0, 0);
     
     ctx.shadowBlur = 30;
-    ctx.fillText(store.name, config.width / 2, signY);
+    ctx.fillText(store.name, 0, 0);
     
     ctx.shadowBlur = 20;
-    ctx.fillText(store.name, config.width / 2, signY);
+    ctx.fillText(store.name, 0, 0);
     
     // Core bright text
     ctx.shadowBlur = 10;
     ctx.fillStyle = '#ffffff';
-    ctx.fillText(store.name, config.width / 2, signY);
+    ctx.fillText(store.name, 0, 0);
     
     // Sign backing/frame
     ctx.shadowBlur = 0;
@@ -694,13 +696,15 @@ function drawRealisticStore(store, y) {
     ctx.globalAlpha = 0.3;
     
     const textWidth = ctx.measureText(store.name).width;
-    ctx.strokeRect(config.width/2 - textWidth/2 - 10, signY - 20, textWidth + 20, 40);
+    ctx.strokeRect(-textWidth/2 - 10, -20, textWidth + 20, 40);
     ctx.globalAlpha = 1;
+    
+    ctx.restore();
     
     // Floor reflection
     ctx.globalAlpha = 0.2;
     ctx.fillStyle = store.color;
-    ctx.fillRect(40, y + 180, config.width - 80, 5);
+    ctx.fillRect(x + 180, 40, 5, config.height - 80);
     ctx.globalAlpha = 1;
     
     ctx.restore();
