@@ -163,6 +163,9 @@ function init() {
     highScore = localStorage.getItem('vaporjump-highscore') || 0;
     updateHighScore();
     
+    // Initialize audio
+    synthAudio.init();
+    
     setupEventListeners();
 }
 
@@ -173,6 +176,7 @@ function setupEventListeners() {
     document.getElementById('backBtn').addEventListener('click', hideInstructions);
     document.getElementById('restartBtn').addEventListener('click', restartGame);
     document.getElementById('menuBtn').addEventListener('click', showMenu);
+    document.getElementById('muteBtn').addEventListener('click', toggleMute);
     
     document.addEventListener('keydown', (e) => {
         keys[e.key] = true;
@@ -197,6 +201,13 @@ function showMenu() {
     document.getElementById('game').classList.remove('active');
     document.getElementById('menu').classList.add('active');
     gameRunning = false;
+    synthAudio.stopMusic();
+}
+
+function toggleMute() {
+    const muteBtn = document.getElementById('muteBtn');
+    const isMuted = synthAudio.toggleMute();
+    muteBtn.textContent = isMuted ? '🔇' : '🔊';
 }
 
 function showInstructions() {
@@ -229,6 +240,10 @@ function startGame() {
     
     document.getElementById('gameOver').classList.add('hidden');
     updateScore();
+    
+    // Start music
+    synthAudio.startMusic();
+    
     gameLoop();
 }
 
@@ -257,6 +272,7 @@ function update() {
     platforms.forEach(platform => {
         if (platform.collidesWith(player)) {
             player.jump();
+            synthAudio.playJumpSound();
         }
     });
     
@@ -338,6 +354,8 @@ function gameOver() {
     gameRunning = false;
     document.getElementById('finalScore').textContent = score;
     document.getElementById('gameOver').classList.remove('hidden');
+    synthAudio.playGameOverSound();
+    synthAudio.stopMusic();
 }
 
 // Initialize when page loads
