@@ -4,7 +4,7 @@ A vaporwave-themed endless jumping game inspired by Doodle Jump, featuring 80's 
 
 ## 🎮 Gameplay
 
-Jump from platform to platform as you ascend infinitely into the neon sky. The higher you climb, the higher your score. But be careful - fall off the screen and it's game over!
+Move horizontally from left to right across platforms while avoiding falling off the bottom. The farther you travel, the higher your score. But be careful - fall off the screen and it's game over!
 
 ## ✨ Features
 
@@ -20,15 +20,16 @@ Jump from platform to platform as you ascend infinitely into the neon sky. The h
 
 ## 🕹️ Controls
 
-- **← → Arrow Keys** - Move left and right
+- **↑ ↓ Arrow Keys** - Move up and down
+- **Automatic Movement** - Player moves right automatically
 - **Automatic Jumping** - Player jumps automatically when landing on platforms
 
 ## 🚀 How to Play
 
 1. Open `index.html` in any modern web browser
 2. Click **START GAME** from the main menu
-3. Use arrow keys to guide your character left and right
-4. Land on platforms to bounce higher
+3. Use arrow keys to guide your character up and down
+4. Land on platforms to bounce upward as you move right
 5. Avoid falling off the bottom of the screen
 6. Beat your high score!
 
@@ -77,11 +78,11 @@ The game features a fully procedurally generated 80s synthwave soundtrack:
 
 ## 🎯 Game Mechanics
 
-- **Gravity**: 0.5 units/frame
-- **Jump Force**: -15 units
-- **Platform Gap**: 80 pixels (vertical)
-- **Player Speed**: 7 units/frame (horizontal)
-- **Score**: Based on height climbed
+- **Gravity**: 0.5 units/frame (downward)
+- **Jump Force**: -15 units (upward)
+- **Platform Gap**: 80 pixels (horizontal)
+- **Player Speed**: 5 units/frame (rightward, constant)
+- **Score**: Based on distance traveled
 
 ## 📱 Browser Compatibility
 

@@ -1,14 +1,14 @@
 // Game configuration
 const config = {
-    width: 600,
-    height: 800,
-    gravity: 0.5,
-    jumpForce: -15,
+    width: 800,
+    height: 600,
+    gravity: 0.5,  // Pulls down (positive Y)
+    jumpForce: -15,  // Jump up (negative Y) 
     platformSpeed: 3,
-    platformGap: 80,
+    platformGap: 80,  // Horizontal gap between platforms
     playerSize: 40,
-    platformWidth: 100,
-    platformHeight: 20,
+    platformWidth: 20,  // Swapped: narrower for vertical platforms
+    platformHeight: 100,  // Swapped: taller for vertical platforms
 };
 
 // Game state
@@ -29,50 +29,50 @@ const colors = {
     neonHotPink: '#ff1493',
 };
 
-// Mall stores with their neon colors (80s/90s classics) - organized by floors
+// Mall stores with their neon colors (80s/90s classics) - organized horizontally
 const mallStores = [
-    // Floor 1
-    { name: 'TOWER RECORDS', color: '#ff00ff', y: 0, floor: 1 },
-    { name: 'SAM GOODY', color: '#00ffff', y: 220, floor: 1 },
+    // Section 1
+    { name: 'TOWER RECORDS', color: '#ff00ff', x: 0, section: 1 },
+    { name: 'SAM GOODY', color: '#00ffff', x: 220, section: 1 },
     
-    // Floor 2  
-    { name: 'THE GAP', color: '#ffff00', y: 440, floor: 2 },
-    { name: 'RADIOSHACK', color: '#ff1493', y: 660, floor: 2 },
+    // Section 2  
+    { name: 'THE GAP', color: '#ffff00', x: 440, section: 2 },
+    { name: 'RADIOSHACK', color: '#ff1493', x: 660, section: 2 },
     
-    // Floor 3
-    { name: 'BABBAGE\'S', color: '#00ffff', y: 880, floor: 3 },
-    { name: 'MUSIC LAND', color: '#ff00ff', y: 1100, floor: 3 },
+    // Section 3
+    { name: 'BABBAGE\'S', color: '#00ffff', x: 880, section: 3 },
+    { name: 'MUSIC LAND', color: '#ff00ff', x: 1100, section: 3 },
     
-    // Floor 4
-    { name: 'KB TOYS', color: '#ffff00', y: 1320, floor: 4 },
-    { name: 'WALDENBOOKS', color: '#ff00ff', y: 1540, floor: 4 },
+    // Section 4
+    { name: 'KB TOYS', color: '#ffff00', x: 1320, section: 4 },
+    { name: 'WALDENBOOKS', color: '#ff00ff', x: 1540, section: 4 },
     
-    // Floor 5
-    { name: 'ARCADE', color: '#00ffff', y: 1760, floor: 5 },
-    { name: 'SEARS', color: '#ff1493', y: 1980, floor: 5 },
+    // Section 5
+    { name: 'ARCADE', color: '#00ffff', x: 1760, section: 5 },
+    { name: 'SEARS', color: '#ff1493', x: 1980, section: 5 },
 ];
 
-// Mall floors - structural levels between stores
+// Mall floors - structural levels (now vertical dividers)
 const mallFloors = [
-    { level: 1, y: 210 },
-    { level: 2, y: 430 },
-    { level: 3, y: 650 },
-    { level: 4, y: 870 },
-    { level: 5, y: 1090 },
-    { level: 6, y: 1310 },
-    { level: 7, y: 1530 },
-    { level: 8, y: 1750 },
-    { level: 9, y: 1970 },
+    { level: 1, x: 210 },
+    { level: 2, x: 430 },
+    { level: 3, x: 650 },
+    { level: 4, x: 870 },
+    { level: 5, x: 1090 },
+    { level: 6, x: 1310 },
+    { level: 7, x: 1530 },
+    { level: 8, x: 1750 },
+    { level: 9, x: 1970 },
 ];
 
 // Mall features (fountains only)
 const mallFeatures = [
-    { type: 'fountain', x: 450, y: 110 },
-    { type: 'fountain', x: 150, y: 550 },
-    { type: 'fountain', x: 400, y: 770 },
-    { type: 'fountain', x: 250, y: 1210 },
-    { type: 'fountain', x: 500, y: 1430 },
-    { type: 'fountain', x: 100, y: 1870 },
+    { type: 'fountain', x: 110, y: 450 },
+    { type: 'fountain', x: 550, y: 150 },
+    { type: 'fountain', x: 770, y: 400 },
+    { type: 'fountain', x: 1210, y: 250 },
+    { type: 'fountain', x: 1430, y: 500 },
+    { type: 'fountain', x: 1870, y: 100 },
 ];
 
 // Player object
@@ -80,9 +80,9 @@ class Player {
     constructor() {
         this.width = config.playerSize;
         this.height = config.playerSize;
-        this.x = config.width / 2 - this.width / 2;
-        this.y = config.height - 200;
-        this.velocityX = 0;
+        this.x = 200;  // Start from left
+        this.y = config.height / 2 - this.height / 2;
+        this.velocityX = 5;  // Constant rightward movement
         this.velocityY = 0;
         this.speed = 7;
         this.trail = []; // Array to store trail positions
@@ -90,8 +90,8 @@ class Player {
     }
 
     update() {
-        // Store previous position for trail (only when moving up)
-        if (this.velocityY < 0) {
+        // Store previous position for trail (only when moving right)
+        if (this.velocityX > 0) {
             this.trail.push({
                 x: this.x + this.width / 2,
                 y: this.y + this.height / 2,
@@ -103,40 +103,43 @@ class Player {
                 this.trail.shift();
             }
         } else {
-            // Fade out trail when not jumping up
+            // Fade out trail when not moving right
             this.trail = this.trail.filter(segment => Date.now() - segment.time < 300);
         }
 
-        // Horizontal movement
-        if (keys['ArrowLeft']) {
-            this.velocityX = -this.speed;
-        } else if (keys['ArrowRight']) {
-            this.velocityX = this.speed;
+        // Vertical movement (up/down controls)
+        if (keys['ArrowUp']) {
+            this.velocityY = -this.speed;
+        } else if (keys['ArrowDown']) {
+            this.velocityY = this.speed;
         } else {
-            this.velocityX *= 0.8;
+            this.velocityY *= 0.8;
         }
 
-        this.x += this.velocityX;
-
-        // Screen wrapping
-        if (this.x + this.width < 0) {
-            this.x = config.width;
-        } else if (this.x > config.width) {
-            this.x = -this.width;
-        }
-
-        // Vertical movement
+        // Apply gravity
         this.velocityY += config.gravity;
         this.y += this.velocityY;
 
-        // Scroll screen when player is in upper half
-        if (this.y < config.height / 2 && this.velocityY < 0) {
-            this.y = config.height / 2;
-            scrollSpeed = -this.velocityY;
+        // Vertical bounds - don't wrap, just limit
+        if (this.y < 0) {
+            this.y = 0;
+            this.velocityY = 0;
+        } else if (this.y + this.height > config.height) {
+            this.y = config.height - this.height;
+            this.velocityY = 0;
+        }
+
+        // Horizontal movement - constant rightward
+        this.x += this.velocityX;
+
+        // Scroll screen when player is in right half
+        if (this.x > config.width / 2) {
+            this.x = config.width / 2;
+            scrollSpeed = this.velocityX;
             
             // Update trail positions when scrolling
             this.trail.forEach(segment => {
-                segment.y += scrollSpeed;
+                segment.x -= scrollSpeed;
             });
         } else {
             scrollSpeed = 0;
@@ -157,12 +160,12 @@ class Player {
         ctx.shadowBlur = 20;
         ctx.shadowColor = colors.playerGlow;
         
-        // Draw player as a triangle
+        // Draw player as a triangle pointing right
         ctx.fillStyle = colors.player;
         ctx.beginPath();
-        ctx.moveTo(this.x + this.width / 2, this.y);
-        ctx.lineTo(this.x, this.y + this.height);
-        ctx.lineTo(this.x + this.width, this.y + this.height);
+        ctx.moveTo(this.x + this.width, this.y + this.height / 2);  // Right point
+        ctx.lineTo(this.x, this.y);  // Top left
+        ctx.lineTo(this.x, this.y + this.height);  // Bottom left
         ctx.closePath();
         ctx.fill();
         
@@ -203,12 +206,12 @@ class Player {
             ctx.shadowBlur = 15 * alpha;
             ctx.shadowColor = colors.playerGlow;
             
-            // Draw as small triangle
+            // Draw as small triangle pointing right
             const halfSize = size / 2;
             ctx.beginPath();
-            ctx.moveTo(segment.x, segment.y - halfSize);
-            ctx.lineTo(segment.x - halfSize, segment.y + halfSize);
-            ctx.lineTo(segment.x + halfSize, segment.y + halfSize);
+            ctx.moveTo(segment.x + halfSize, segment.y);  // Right point
+            ctx.lineTo(segment.x - halfSize, segment.y - halfSize);  // Top left
+            ctx.lineTo(segment.x - halfSize, segment.y + halfSize);  // Bottom left
             ctx.closePath();
             ctx.fill();
             
@@ -239,7 +242,7 @@ class Platform {
     }
 
     update() {
-        this.y += scrollSpeed;
+        this.x -= scrollSpeed;  // Move left as player advances right
     }
 
     draw() {
@@ -272,11 +275,11 @@ class Platform {
 
     collidesWith(player) {
         return (
-            player.velocityY > 0 &&
+            player.velocityY > 0 &&  // Player falling down
             player.x + player.width > this.x &&
             player.x < this.x + this.width &&
             player.y + player.height > this.y &&
-            player.y + player.height < this.y + this.height + player.velocityY
+            player.y + player.height < this.y + this.height / 2  // Landing on top
         );
     }
 }
@@ -309,7 +312,7 @@ function setupEventListeners() {
     
     document.addEventListener('keydown', (e) => {
         keys[e.key] = true;
-        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
             e.preventDefault();
         }
     });
@@ -357,15 +360,15 @@ function startGame() {
     scrollSpeed = 0;
     gameRunning = true;
     
-    // Create initial platforms
+    // Create initial platforms horizontally
     for (let i = 0; i < 10; i++) {
-        const x = Math.random() * (config.width - config.platformWidth);
-        const y = config.height - (i * config.platformGap) - 100;
+        const x = 300 + (i * config.platformGap);
+        const y = Math.random() * (config.height - config.platformHeight - 100) + 50;
         platforms.push(new Platform(x, y));
     }
     
     // Starting platform
-    platforms.push(new Platform(config.width / 2 - config.platformWidth / 2, config.height - 50));
+    platforms.push(new Platform(50, config.height / 2 - config.platformHeight / 2));
     
     document.getElementById('gameOver').classList.add('hidden');
     updateScore();
@@ -400,18 +403,18 @@ function update() {
     // Check platform collisions
     platforms.forEach(platform => {
         if (platform.collidesWith(player)) {
-            player.jump();
+            player.leap();
             synthAudio.playJumpSound();
         }
     });
     
     // Remove off-screen platforms and add new ones
-    platforms = platforms.filter(platform => platform.y < config.height + 50);
+    platforms = platforms.filter(platform => platform.x > -config.platformWidth - 50);
     
     while (platforms.length < 12) {
-        const x = Math.random() * (config.width - config.platformWidth);
-        const y = platforms[0].y - config.platformGap;
-        platforms.unshift(new Platform(x, y));
+        const x = platforms[platforms.length - 1].x + config.platformGap;
+        const y = Math.random() * (config.height - config.platformHeight - 100) + 50;
+        platforms.push(new Platform(x, y));
     }
     
     // Update score
@@ -426,16 +429,16 @@ function update() {
         }
     }
     
-    // Check game over
+    // Check game over (player falls off bottom edge)
     if (player.y > config.height) {
         gameOver();
     }
 }
 
-// Draw vertical mall background
+// Draw horizontal mall background
 function drawMallBackground(scrollOffset) {
     // Clear canvas with gradient background
-    const gradient = ctx.createLinearGradient(0, 0, 0, config.height);
+    const gradient = ctx.createLinearGradient(0, 0, config.width, 0);
     gradient.addColorStop(0, '#0a0015');
     gradient.addColorStop(0.5, '#1a0033');
     gradient.addColorStop(1, '#2d0052');
@@ -449,36 +452,36 @@ function drawMallBackground(scrollOffset) {
     
     // Calculate total scroll for infinite repeating stores
     const totalScroll = score * 0.5;
-    const repeatHeight = 2200;
+    const repeatWidth = 2200;
     
-    // Draw mall floors first (behind stores)
+    // Draw mall floors first (behind stores) - now vertical dividers
     mallFloors.forEach((floor) => {
-        const baseY = (floor.y - totalScroll) % repeatHeight;
-        const floorY = baseY < -50 ? baseY + repeatHeight : baseY;
+        const baseX = (floor.x - totalScroll) % repeatWidth;
+        const floorX = baseX < -50 ? baseX + repeatWidth : baseX;
         
-        if (floorY > -50 && floorY < config.height + 50) {
-            drawMallFloor(floorY, floor.level);
+        if (floorX > -50 && floorX < config.width + 50) {
+            drawMallFloor(floorX, floor.level);
         }
     });
     
     // Draw storefronts with enhanced realism
     mallStores.forEach((store, index) => {
-        const baseY = (store.y - totalScroll) % repeatHeight;
-        const storeY = baseY < -250 ? baseY + repeatHeight : baseY;
+        const baseX = (store.x - totalScroll) % repeatWidth;
+        const storeX = baseX < -250 ? baseX + repeatWidth : baseX;
         
-        if (storeY > -250 && storeY < config.height + 250) {
-            drawRealisticStore(store, storeY);
+        if (storeX > -250 && storeX < config.width + 250) {
+            drawRealisticStore(store, storeX);
         }
     });
     
     // Draw mall features (fountains only)
     mallFeatures.forEach((feature) => {
-        const baseY = (feature.y - totalScroll) % repeatHeight;
-        const featureY = baseY < -100 ? baseY + repeatHeight : baseY;
+        const baseX = (feature.x - totalScroll) % repeatWidth;
+        const featureX = baseX < -100 ? baseX + repeatWidth : baseX;
         
-        if (featureY > -100 && featureY < config.height + 100) {
+        if (featureX > -100 && featureX < config.width + 100) {
             if (feature.type === 'fountain') {
-                drawFountain(feature.x, featureY);
+                drawFountain(featureX, feature.y);
             }
         }
     });
@@ -487,10 +490,10 @@ function drawMallBackground(scrollOffset) {
     ctx.strokeStyle = 'rgba(0, 255, 255, 0.03)';
     ctx.lineWidth = 1;
     
-    for (let i = 0; i < config.width; i += 100) {
+    for (let i = 0; i < config.height; i += 100) {
         ctx.beginPath();
-        ctx.moveTo(i, 0);
-        ctx.lineTo(i, config.height);
+        ctx.moveTo(0, i);
+        ctx.lineTo(config.width, i);
         ctx.stroke();
     }
     
@@ -499,7 +502,7 @@ function drawMallBackground(scrollOffset) {
     
     // Add atmospheric haze overlay for better contrast
     ctx.save();
-    const hazeGradient = ctx.createLinearGradient(0, 0, 0, config.height);
+    const hazeGradient = ctx.createLinearGradient(0, 0, config.width, 0);
     hazeGradient.addColorStop(0, 'rgba(10, 0, 25, 0.2)');
     hazeGradient.addColorStop(0.3, 'rgba(20, 10, 40, 0.3)');
     hazeGradient.addColorStop(0.7, 'rgba(15, 5, 30, 0.25)');
