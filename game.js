@@ -29,18 +29,50 @@ const colors = {
     neonHotPink: '#ff1493',
 };
 
-// Mall stores with their neon colors (80s/90s classics)
+// Mall stores with their neon colors (80s/90s classics) - organized by floors
 const mallStores = [
-    { name: 'TOWER RECORDS', color: '#ff00ff', y: 0 },
-    { name: 'SAM GOODY', color: '#00ffff', y: 150 },
-    { name: 'THE GAP', color: '#ffff00', y: 300 },
-    { name: 'RADIOSHACK', color: '#ff1493', y: 450 },
-    { name: 'BLOCKBUSTER', color: '#00ffff', y: 600 },
-    { name: 'MUSIC LAND', color: '#ff00ff', y: 750 },
-    { name: 'KB TOYS', color: '#ffff00', y: 900 },
-    { name: 'WALDENBOOKS', color: '#ff00ff', y: 1050 },
-    { name: 'ARCADE', color: '#00ffff', y: 1200 },
-    { name: 'SEARS', color: '#ff1493', y: 1350 },
+    // Floor 1
+    { name: 'TOWER RECORDS', color: '#ff00ff', y: 0, floor: 1 },
+    { name: 'SAM GOODY', color: '#00ffff', y: 220, floor: 1 },
+    
+    // Floor 2  
+    { name: 'THE GAP', color: '#ffff00', y: 440, floor: 2 },
+    { name: 'RADIOSHACK', color: '#ff1493', y: 660, floor: 2 },
+    
+    // Floor 3
+    { name: 'BABBAGE\'S', color: '#00ffff', y: 880, floor: 3 },
+    { name: 'MUSIC LAND', color: '#ff00ff', y: 1100, floor: 3 },
+    
+    // Floor 4
+    { name: 'KB TOYS', color: '#ffff00', y: 1320, floor: 4 },
+    { name: 'WALDENBOOKS', color: '#ff00ff', y: 1540, floor: 4 },
+    
+    // Floor 5
+    { name: 'ARCADE', color: '#00ffff', y: 1760, floor: 5 },
+    { name: 'SEARS', color: '#ff1493', y: 1980, floor: 5 },
+];
+
+// Mall floors - structural levels between stores
+const mallFloors = [
+    { level: 1, y: 210 },
+    { level: 2, y: 430 },
+    { level: 3, y: 650 },
+    { level: 4, y: 870 },
+    { level: 5, y: 1090 },
+    { level: 6, y: 1310 },
+    { level: 7, y: 1530 },
+    { level: 8, y: 1750 },
+    { level: 9, y: 1970 },
+];
+
+// Mall features (fountains only)
+const mallFeatures = [
+    { type: 'fountain', x: 450, y: 110 },
+    { type: 'fountain', x: 150, y: 550 },
+    { type: 'fountain', x: 400, y: 770 },
+    { type: 'fountain', x: 250, y: 1210 },
+    { type: 'fountain', x: 500, y: 1430 },
+    { type: 'fountain', x: 100, y: 1870 },
 ];
 
 // Player object
@@ -315,65 +347,49 @@ function drawMallBackground(scrollOffset) {
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, config.width, config.height);
     
-    // Calculate total scroll for infinite repeating stores
-    const totalScroll = score * 0.5; // Use score as scroll metric
+    // Add subtle blur to background elements
+    ctx.save();
+    ctx.filter = 'blur(1px)';
+    ctx.globalAlpha = 0.8;
     
-    // Draw storefronts
-    mallStores.forEach((store, index) => {
-        // Calculate repeating position
-        const baseY = (store.y - totalScroll) % 1500;
-        const storeY = baseY < -200 ? baseY + 1500 : baseY;
+    // Calculate total scroll for infinite repeating stores
+    const totalScroll = score * 0.5;
+    const repeatHeight = 2200;
+    
+    // Draw mall floors first (behind stores)
+    mallFloors.forEach((floor) => {
+        const baseY = (floor.y - totalScroll) % repeatHeight;
+        const floorY = baseY < -50 ? baseY + repeatHeight : baseY;
         
-        if (storeY > -200 && storeY < config.height + 200) {
-            // Storefront building (dark rectangle)
-            ctx.fillStyle = 'rgba(10, 0, 30, 0.8)';
-            ctx.fillRect(0, storeY, config.width, 140);
-            
-            // Storefront window/facade
-            ctx.fillStyle = 'rgba(20, 0, 40, 0.9)';
-            ctx.fillRect(20, storeY + 20, config.width - 40, 100);
-            
-            // Window border glow
-            ctx.strokeStyle = store.color;
-            ctx.lineWidth = 2;
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = store.color;
-            ctx.strokeRect(20, storeY + 20, config.width - 40, 100);
-            ctx.shadowBlur = 0;
-            
-            // Draw neon sign
-            ctx.save();
-            ctx.font = 'bold 24px Orbitron, monospace';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            
-            // Neon glow effect
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = store.color;
-            ctx.fillStyle = store.color;
-            
-            // Draw text with multiple layers for stronger glow
-            const signY = storeY + 70;
-            ctx.fillText(store.name, config.width / 2, signY);
-            ctx.shadowBlur = 30;
-            ctx.fillText(store.name, config.width / 2, signY);
-            ctx.shadowBlur = 40;
-            ctx.fillText(store.name, config.width / 2, signY);
-            
-            ctx.restore();
-            
-            // Add some decorative lines
-            ctx.strokeStyle = `rgba(${store.color === '#ff00ff' ? '255,0,255' : store.color === '#00ffff' ? '0,255,255' : store.color === '#ffff00' ? '255,255,0' : '255,20,147'}, 0.3)`;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(0, storeY + 140);
-            ctx.lineTo(config.width, storeY + 140);
-            ctx.stroke();
+        if (floorY > -50 && floorY < config.height + 50) {
+            drawMallFloor(floorY, floor.level);
+        }
+    });
+    
+    // Draw storefronts with enhanced realism
+    mallStores.forEach((store, index) => {
+        const baseY = (store.y - totalScroll) % repeatHeight;
+        const storeY = baseY < -250 ? baseY + repeatHeight : baseY;
+        
+        if (storeY > -250 && storeY < config.height + 250) {
+            drawRealisticStore(store, storeY);
+        }
+    });
+    
+    // Draw mall features (fountains only)
+    mallFeatures.forEach((feature) => {
+        const baseY = (feature.y - totalScroll) % repeatHeight;
+        const featureY = baseY < -100 ? baseY + repeatHeight : baseY;
+        
+        if (featureY > -100 && featureY < config.height + 100) {
+            if (feature.type === 'fountain') {
+                drawFountain(feature.x, featureY);
+            }
         }
     });
     
     // Draw subtle grid overlay to maintain vaporwave aesthetic
-    ctx.strokeStyle = 'rgba(0, 255, 255, 0.05)';
+    ctx.strokeStyle = 'rgba(0, 255, 255, 0.03)';
     ctx.lineWidth = 1;
     
     for (let i = 0; i < config.width; i += 100) {
@@ -382,6 +398,287 @@ function drawMallBackground(scrollOffset) {
         ctx.lineTo(i, config.height);
         ctx.stroke();
     }
+    
+    // Reset filter and alpha for foreground elements
+    ctx.restore();
+    
+    // Add atmospheric haze overlay for better contrast
+    ctx.save();
+    const hazeGradient = ctx.createLinearGradient(0, 0, 0, config.height);
+    hazeGradient.addColorStop(0, 'rgba(10, 0, 25, 0.2)');
+    hazeGradient.addColorStop(0.3, 'rgba(20, 10, 40, 0.3)');
+    hazeGradient.addColorStop(0.7, 'rgba(15, 5, 30, 0.25)');
+    hazeGradient.addColorStop(1, 'rgba(25, 15, 45, 0.2)');
+    
+    ctx.fillStyle = hazeGradient;
+    ctx.fillRect(0, 0, config.width, config.height);
+    
+    // Add some subtle atmospheric particles
+    const time = Date.now() * 0.001;
+    ctx.fillStyle = 'rgba(100, 50, 150, 0.1)';
+    for (let i = 0; i < 12; i++) {
+        const x = (Math.sin(time + i) * 100) + (config.width / 2);
+        const y = (Math.cos(time * 0.7 + i * 0.5) * 200) + (config.height / 2);
+        const size = 3 + Math.sin(time + i * 2) * 1;
+        
+        ctx.globalAlpha = 0.05 + Math.sin(time + i) * 0.03;
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    
+    ctx.restore();
+}
+
+// Draw mall floor/level structure
+function drawMallFloor(y, level) {
+    ctx.save();
+    
+    // Main floor structure
+    ctx.fillStyle = 'rgba(40, 25, 60, 0.9)';
+    ctx.fillRect(0, y - 15, config.width, 30);
+    
+    // Floor edge/rim with neon accent
+    ctx.strokeStyle = '#00ffff';
+    ctx.lineWidth = 2;
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = '#00ffff';
+    ctx.strokeRect(0, y - 15, config.width, 30);
+    ctx.shadowBlur = 0;
+    
+    // Floor support beams
+    for (let x = 100; x < config.width; x += 150) {
+        ctx.fillStyle = 'rgba(60, 40, 80, 0.8)';
+        ctx.fillRect(x - 5, y - 15, 10, 30);
+        
+        // Beam highlights
+        ctx.strokeStyle = '#ff1493';
+        ctx.lineWidth = 1;
+        ctx.shadowBlur = 5;
+        ctx.shadowColor = '#ff1493';
+        ctx.strokeRect(x - 5, y - 15, 10, 30);
+        ctx.shadowBlur = 0;
+    }
+    
+    // Floor pattern/tiles
+    ctx.strokeStyle = 'rgba(100, 50, 150, 0.3)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < config.width; x += 25) {
+        ctx.beginPath();
+        ctx.moveTo(x, y - 15);
+        ctx.lineTo(x, y + 15);
+        ctx.stroke();
+    }
+    
+    ctx.restore();
+}
+
+// Draw realistic storefront
+function drawRealisticStore(store, y) {
+    ctx.save();
+    
+    // Store building depth/shadow
+    ctx.fillStyle = 'rgba(5, 0, 15, 0.9)';
+    ctx.fillRect(30, y - 10, config.width - 60, 200);
+    
+    // Main storefront structure
+    ctx.fillStyle = 'rgba(25, 15, 40, 0.9)';
+    ctx.fillRect(40, y, config.width - 80, 180);
+    
+    // Store entrance area (recessed)
+    ctx.fillStyle = 'rgba(35, 20, 50, 0.95)';
+    ctx.fillRect(config.width/2 - 60, y + 120, 120, 60);
+    
+    // Double doors with glass effect
+    ctx.fillStyle = 'rgba(10, 5, 20, 0.8)';
+    ctx.fillRect(config.width/2 - 55, y + 125, 50, 50);
+    ctx.fillRect(config.width/2 + 5, y + 125, 50, 50);
+    
+    // Door frames with neon glow
+    ctx.strokeStyle = store.color;
+    ctx.lineWidth = 3;
+    ctx.shadowBlur = 12;
+    ctx.shadowColor = store.color;
+    ctx.strokeRect(config.width/2 - 55, y + 125, 50, 50);
+    ctx.strokeRect(config.width/2 + 5, y + 125, 50, 50);
+    
+    // Door handles
+    ctx.fillStyle = store.color;
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.arc(config.width/2 - 10, y + 150, 3, 0, Math.PI * 2);
+    ctx.arc(config.width/2 + 10, y + 150, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    
+    // Large display windows
+    const windowPositions = [
+        { x: 60, width: 100 },
+        { x: 180, width: 120 },
+        { x: config.width - 280, width: 120 },
+        { x: config.width - 140, width: 100 }
+    ];
+    
+    windowPositions.forEach((window, i) => {
+        // Window glass
+        ctx.fillStyle = 'rgba(20, 10, 40, 0.6)';
+        ctx.fillRect(window.x, y + 30, window.width, 80);
+        
+        // Window frame
+        ctx.strokeStyle = store.color;
+        ctx.lineWidth = 2;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = store.color;
+        ctx.strokeRect(window.x, y + 30, window.width, 80);
+        
+        // Window display items
+        if (Math.random() > 0.4) {
+            ctx.fillStyle = store.color;
+            ctx.globalAlpha = 0.6;
+            // Simulate products/displays
+            ctx.fillRect(window.x + 10, y + 70, 20, 25);
+            ctx.fillRect(window.x + 40, y + 50, 25, 35);
+            ctx.fillRect(window.x + window.width - 35, y + 60, 20, 30);
+            ctx.globalAlpha = 1;
+        }
+        
+        ctx.shadowBlur = 0;
+    });
+    
+    // Overhead canopy/awning
+    ctx.fillStyle = store.color;
+    ctx.globalAlpha = 0.4;
+    ctx.fillRect(40, y - 25, config.width - 80, 25);
+    ctx.globalAlpha = 1;
+    
+    // Canopy support pillars
+    ctx.strokeStyle = store.color;
+    ctx.lineWidth = 6;
+    ctx.shadowBlur = 12;
+    ctx.shadowColor = store.color;
+    ctx.beginPath();
+    ctx.moveTo(60, y - 25);
+    ctx.lineTo(60, y);
+    ctx.moveTo(config.width - 60, y - 25);
+    ctx.lineTo(config.width - 60, y);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    
+    // Large neon store sign
+    ctx.font = 'bold 32px Orbitron, monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    
+    // Multi-layer neon effect for intense glow
+    const signY = y + 70;
+    
+    // Outer glow layers
+    ctx.shadowBlur = 40;
+    ctx.shadowColor = store.color;
+    ctx.fillStyle = store.color;
+    ctx.fillText(store.name, config.width / 2, signY);
+    
+    ctx.shadowBlur = 30;
+    ctx.fillText(store.name, config.width / 2, signY);
+    
+    ctx.shadowBlur = 20;
+    ctx.fillText(store.name, config.width / 2, signY);
+    
+    // Core bright text
+    ctx.shadowBlur = 10;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(store.name, config.width / 2, signY);
+    
+    // Sign backing/frame
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = store.color;
+    ctx.lineWidth = 3;
+    ctx.globalAlpha = 0.3;
+    
+    const textWidth = ctx.measureText(store.name).width;
+    ctx.strokeRect(config.width/2 - textWidth/2 - 10, signY - 20, textWidth + 20, 40);
+    ctx.globalAlpha = 1;
+    
+    // Floor reflection
+    ctx.globalAlpha = 0.2;
+    ctx.fillStyle = store.color;
+    ctx.fillRect(40, y + 180, config.width - 80, 5);
+    ctx.globalAlpha = 1;
+    
+    ctx.restore();
+}
+
+// Draw fountain
+function drawFountain(x, y) {
+    ctx.save();
+    
+    // Fountain base (front view - oval/elliptical)
+    ctx.fillStyle = 'rgba(120, 120, 140, 0.8)';
+    ctx.beginPath();
+    ctx.ellipse(x, y + 80, 40, 15, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Fountain wall/rim (cylindrical front view)
+    ctx.fillStyle = 'rgba(140, 140, 160, 0.9)';
+    ctx.fillRect(x - 40, y + 65, 80, 15);
+    
+    // Fountain rim glow
+    ctx.strokeStyle = '#ff1493';
+    ctx.lineWidth = 3;
+    ctx.shadowBlur = 12;
+    ctx.shadowColor = '#ff1493';
+    ctx.strokeRect(x - 40, y + 65, 80, 15);
+    
+    // Central fountain pillar
+    ctx.fillStyle = 'rgba(160, 160, 180, 0.9)';
+    ctx.fillRect(x - 8, y + 40, 16, 40);
+    
+    // Water spouts (front view - vertical streams)
+    const time = Date.now() * 0.008;
+    for (let i = 0; i < 5; i++) {
+        const spoutX = x - 30 + (i * 15);
+        const height = 20 + Math.sin(time + i) * 8;
+        
+        // Water stream
+        ctx.strokeStyle = '#00ffff';
+        ctx.lineWidth = 2;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = '#00ffff';
+        ctx.globalAlpha = 0.7 + Math.sin(time + i) * 0.3;
+        
+        ctx.beginPath();
+        ctx.moveTo(spoutX, y + 65);
+        ctx.lineTo(spoutX, y + 65 - height);
+        ctx.stroke();
+        
+        // Water droplets falling
+        for (let j = 0; j < 3; j++) {
+            const dropY = y + 65 - height + (j * 8) + (time * 30) % 24;
+            if (dropY < y + 65) {
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowBlur = 4;
+                ctx.globalAlpha = 0.6;
+                ctx.beginPath();
+                ctx.arc(spoutX + Math.sin(time + j) * 2, dropY, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+    }
+    
+    // Central main water spout
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 4;
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = '#00ffff';
+    
+    const mainHeight = 35 + Math.sin(time * 1.5) * 10;
+    ctx.beginPath();
+    ctx.moveTo(x, y + 65);
+    ctx.lineTo(x, y + 65 - mainHeight);
+    ctx.stroke();
+    
+    ctx.restore();
 }
 
 // Draw game
