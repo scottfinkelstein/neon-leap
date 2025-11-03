@@ -14,7 +14,7 @@ Move horizontally from left to right across platforms while avoiding falling off
 - **Retro Sound Effects** - Jump sounds and game over effects with authentic synth tones
 - **High Score Tracking** - Your best score is saved locally
 - **Smooth Physics** - Realistic jumping and gravity mechanics
-- **Screen Wrapping** - Move off one side and appear on the other
+- **Horizontal Scrolling** - Move automatically from left to right through the neon mall
 - **Responsive Design** - Plays on desktop and mobile devices
 - **Audio Controls** - Mute/unmute button for music and sound effects
 
