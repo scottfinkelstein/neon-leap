@@ -403,7 +403,7 @@ function update() {
     // Check platform collisions
     platforms.forEach(platform => {
         if (platform.collidesWith(player)) {
-            player.leap();
+            player.jump();
             synthAudio.playJumpSound();
         }
     });
