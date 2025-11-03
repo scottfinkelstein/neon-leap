@@ -10,10 +10,13 @@ Jump from platform to platform as you ascend infinitely into the neon sky. The h
 
 - **80's Vaporwave Aesthetic** - Neon pink, cyan, and yellow color palette with glowing effects
 - **Retro Grid Background** - Classic vaporwave grid pattern
+- **Synthwave Soundtrack** - Procedurally generated 80s style synth music using Web Audio API
+- **Retro Sound Effects** - Jump sounds and game over effects with authentic synth tones
 - **High Score Tracking** - Your best score is saved locally
 - **Smooth Physics** - Realistic jumping and gravity mechanics
 - **Screen Wrapping** - Move off one side and appear on the other
 - **Responsive Design** - Plays on desktop and mobile devices
+- **Audio Controls** - Mute/unmute button for music and sound effects
 
 ## 🕹️ Controls
 
@@ -34,6 +37,7 @@ Jump from platform to platform as you ascend infinitely into the neon sky. The h
 - `index.html` - Main HTML structure
 - `styles.css` - Vaporwave styling and animations
 - `game.js` - Game logic and canvas rendering
+- `audio.js` - 80s synthwave audio system using Web Audio API
 
 ## 🎨 Design Elements
 
@@ -43,6 +47,8 @@ Jump from platform to platform as you ascend infinitely into the neon sky. The h
 - **Triangle Player Character** - Glowing geometric shape
 - **Scan Line Effects** - Retro CRT monitor feel
 - **Orbitron Font** - Futuristic 80's computer typography
+- **Procedural Synth Music** - Authentic 80s synthwave soundtrack with chord progressions
+- **Interactive Audio** - Dynamic sound effects for jumps and game events
 
 ## 🛠️ Technical Details
 
@@ -52,6 +58,22 @@ Built with vanilla JavaScript and HTML5 Canvas. No external libraries required!
 - RequestAnimationFrame for smooth 60fps gameplay
 - LocalStorage for high score persistence
 - Responsive viewport sizing
+- Web Audio API for procedural audio synthesis
+- Real-time sound generation (no audio files needed)
+
+## 🎵 Audio Features
+
+The game features a fully procedurally generated 80s synthwave soundtrack:
+
+- **Chord Progression**: I-vi-IV-V in C major (classic 80s pop progression)
+- **Synth Pads**: Warm sawtooth wave pads with slow attack/release
+- **Bass Line**: Punchy triangle wave bass on beats 1 and 3
+- **Arpeggios**: Square wave arpeggios for that classic synth texture
+- **Sound Effects**: 
+  - Jump: Upward pitch sweep
+  - Game Over: Downward pitch sweep
+- **Audio Controls**: Mute/unmute button in top-right corner
+- **No Audio Files**: Everything is generated in real-time using the Web Audio API
 
 ## 🎯 Game Mechanics
 
@@ -67,15 +89,16 @@ Works on all modern browsers that support:
 - HTML5 Canvas
 - ES6 JavaScript
 - CSS3 animations
+- Web Audio API
 
 ## 🎵 Future Enhancements
 
-- Background music (synthwave/vaporwave soundtrack)
 - Power-ups (springs, jetpacks)
 - Moving platforms
 - Enemy obstacles
 - Multiple difficulty levels
 - Leaderboard integration
+- Additional music tracks
 
 ## 📄 License
 
