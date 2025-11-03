@@ -35,9 +35,28 @@ class Player {
         this.velocityX = 0;
         this.velocityY = 0;
         this.speed = 7;
+        this.trail = []; // Array to store trail positions
+        this.maxTrailLength = 12; // Maximum number of trail segments
     }
 
     update() {
+        // Store previous position for trail (only when moving up)
+        if (this.velocityY < 0) {
+            this.trail.push({
+                x: this.x + this.width / 2,
+                y: this.y + this.height / 2,
+                time: Date.now()
+            });
+            
+            // Remove old trail segments
+            if (this.trail.length > this.maxTrailLength) {
+                this.trail.shift();
+            }
+        } else {
+            // Fade out trail when not jumping up
+            this.trail = this.trail.filter(segment => Date.now() - segment.time < 300);
+        }
+
         // Horizontal movement
         if (keys['ArrowLeft']) {
             this.velocityX = -this.speed;
@@ -64,6 +83,11 @@ class Player {
         if (this.y < config.height / 2 && this.velocityY < 0) {
             this.y = config.height / 2;
             scrollSpeed = -this.velocityY;
+            
+            // Update trail positions when scrolling
+            this.trail.forEach(segment => {
+                segment.y += scrollSpeed;
+            });
         } else {
             scrollSpeed = 0;
         }
@@ -74,6 +98,9 @@ class Player {
     }
 
     draw() {
+        // Draw trail first (behind player)
+        this.drawTrail();
+        
         ctx.save();
         
         // Glow effect
@@ -94,6 +121,58 @@ class Player {
         ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 2;
         ctx.stroke();
+        
+        ctx.restore();
+    }
+
+    drawTrail() {
+        if (this.trail.length < 2) return;
+        
+        ctx.save();
+        
+        // Draw trail segments
+        for (let i = 0; i < this.trail.length - 1; i++) {
+            const segment = this.trail[i];
+            const nextSegment = this.trail[i + 1];
+            const age = Date.now() - segment.time;
+            const maxAge = 300; // milliseconds
+            
+            // Calculate fade based on age and position in trail
+            const ageFade = Math.max(0, 1 - age / maxAge);
+            const positionFade = (i + 1) / this.trail.length;
+            const alpha = ageFade * positionFade * 0.8;
+            
+            if (alpha <= 0) continue;
+            
+            // Calculate size based on position in trail
+            const size = (this.width * 0.8) * positionFade;
+            
+            // Draw glowing trail segment
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = colors.player;
+            ctx.shadowBlur = 15 * alpha;
+            ctx.shadowColor = colors.playerGlow;
+            
+            // Draw as small triangle
+            const halfSize = size / 2;
+            ctx.beginPath();
+            ctx.moveTo(segment.x, segment.y - halfSize);
+            ctx.lineTo(segment.x - halfSize, segment.y + halfSize);
+            ctx.lineTo(segment.x + halfSize, segment.y + halfSize);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Connect trail segments with lines
+            if (i > 0) {
+                ctx.shadowBlur = 5 * alpha;
+                ctx.strokeStyle = colors.player;
+                ctx.lineWidth = 3 * positionFade;
+                ctx.beginPath();
+                ctx.moveTo(this.trail[i - 1].x, this.trail[i - 1].y);
+                ctx.lineTo(segment.x, segment.y);
+                ctx.stroke();
+            }
+        }
         
         ctx.restore();
     }
