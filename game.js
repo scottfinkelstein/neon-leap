@@ -23,7 +23,25 @@ const colors = {
     platforms: ['#ff00ff', '#00ffff', '#ffff00', '#ff1493'],
     bg: '#0a0015',
     grid: 'rgba(0, 255, 255, 0.1)',
+    neonPink: '#ff00ff',
+    neonCyan: '#00ffff',
+    neonYellow: '#ffff00',
+    neonHotPink: '#ff1493',
 };
+
+// Mall stores with their neon colors (80s/90s classics)
+const mallStores = [
+    { name: 'TOWER RECORDS', color: '#ff00ff', y: 0 },
+    { name: 'SAM GOODY', color: '#00ffff', y: 150 },
+    { name: 'THE GAP', color: '#ffff00', y: 300 },
+    { name: 'RADIOSHACK', color: '#ff1493', y: 450 },
+    { name: 'BLOCKBUSTER', color: '#00ffff', y: 600 },
+    { name: 'MUSIC LAND', color: '#ff00ff', y: 750 },
+    { name: 'KB TOYS', color: '#ffff00', y: 900 },
+    { name: 'WALDENBOOKS', color: '#ff00ff', y: 1050 },
+    { name: 'ARCADE', color: '#00ffff', y: 1200 },
+    { name: 'SEARS', color: '#ff1493', y: 1350 },
+];
 
 // Player object
 class Player {
@@ -287,8 +305,8 @@ function update() {
     }
 }
 
-// Draw game
-function draw() {
+// Draw vertical mall background
+function drawMallBackground(scrollOffset) {
     // Clear canvas with gradient background
     const gradient = ctx.createLinearGradient(0, 0, 0, config.height);
     gradient.addColorStop(0, '#0a0015');
@@ -297,23 +315,79 @@ function draw() {
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, config.width, config.height);
     
-    // Draw grid
-    ctx.strokeStyle = colors.grid;
+    // Calculate total scroll for infinite repeating stores
+    const totalScroll = score * 0.5; // Use score as scroll metric
+    
+    // Draw storefronts
+    mallStores.forEach((store, index) => {
+        // Calculate repeating position
+        const baseY = (store.y - totalScroll) % 1500;
+        const storeY = baseY < -200 ? baseY + 1500 : baseY;
+        
+        if (storeY > -200 && storeY < config.height + 200) {
+            // Storefront building (dark rectangle)
+            ctx.fillStyle = 'rgba(10, 0, 30, 0.8)';
+            ctx.fillRect(0, storeY, config.width, 140);
+            
+            // Storefront window/facade
+            ctx.fillStyle = 'rgba(20, 0, 40, 0.9)';
+            ctx.fillRect(20, storeY + 20, config.width - 40, 100);
+            
+            // Window border glow
+            ctx.strokeStyle = store.color;
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = store.color;
+            ctx.strokeRect(20, storeY + 20, config.width - 40, 100);
+            ctx.shadowBlur = 0;
+            
+            // Draw neon sign
+            ctx.save();
+            ctx.font = 'bold 24px Orbitron, monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Neon glow effect
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = store.color;
+            ctx.fillStyle = store.color;
+            
+            // Draw text with multiple layers for stronger glow
+            const signY = storeY + 70;
+            ctx.fillText(store.name, config.width / 2, signY);
+            ctx.shadowBlur = 30;
+            ctx.fillText(store.name, config.width / 2, signY);
+            ctx.shadowBlur = 40;
+            ctx.fillText(store.name, config.width / 2, signY);
+            
+            ctx.restore();
+            
+            // Add some decorative lines
+            ctx.strokeStyle = `rgba(${store.color === '#ff00ff' ? '255,0,255' : store.color === '#00ffff' ? '0,255,255' : store.color === '#ffff00' ? '255,255,0' : '255,20,147'}, 0.3)`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, storeY + 140);
+            ctx.lineTo(config.width, storeY + 140);
+            ctx.stroke();
+        }
+    });
+    
+    // Draw subtle grid overlay to maintain vaporwave aesthetic
+    ctx.strokeStyle = 'rgba(0, 255, 255, 0.05)';
     ctx.lineWidth = 1;
     
-    for (let i = 0; i < config.width; i += 50) {
+    for (let i = 0; i < config.width; i += 100) {
         ctx.beginPath();
         ctx.moveTo(i, 0);
         ctx.lineTo(i, config.height);
         ctx.stroke();
     }
-    
-    for (let i = 0; i < config.height; i += 50) {
-        ctx.beginPath();
-        ctx.moveTo(0, i);
-        ctx.lineTo(config.width, i);
-        ctx.stroke();
-    }
+}
+
+// Draw game
+function draw() {
+    // Draw mall background
+    drawMallBackground(scrollSpeed);
     
     // Draw platforms
     platforms.forEach(platform => platform.draw());
