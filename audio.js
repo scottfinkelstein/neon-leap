@@ -11,7 +11,6 @@ class SynthAudio {
         this.isPlaying = false;
         
         // Music state
-        this.musicOscillators = [];
         this.musicIntervals = [];
         
         // 80s synthwave chord progression (I-vi-IV-V in C major)
@@ -199,7 +198,7 @@ class SynthAudio {
         const chordInterval = this.tempo * 4; // 4 beats per chord
         this.musicIntervals.push(
             setInterval(() => {
-                if (this.isPlaying && !this.isMuted) {
+                if (this.isPlaying) {
                     this.scheduleChord();
                 }
             }, chordInterval)
